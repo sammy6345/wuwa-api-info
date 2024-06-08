@@ -49,7 +49,8 @@ https://aki-gm-resources-back.aki-game.net/gamenotice/G153/%SERVER_ID%/entrypoin
 	"contentUrl":[
 		"https://aki-gm-resources-back.aki-game.net/gamenotice/G153/%SERVER_ID%/notice.json"
 	]
-}```
+}
+```
 
 ### Game Notice (JSON)
 
