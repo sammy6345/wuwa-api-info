@@ -1,18 +1,80 @@
 # Wuthering Waves API's
 
 ## Gacha
+(This page is for viewing the statistics in browser)
 https://aki-gm-resources-oversea.aki-game.net/aki/gacha/index.html#/record?
 #### Variables
-| Variable Name | Variable Type    | Possible Values                                                                                                                                                                                                  | Required | Additional info                                                                                                                              |
-| ------------- | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Variable Name | Variable Type    | Possible Values                                                                                                                                                                                                       | Required | Additional info                                                                                                                              |
+| ------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | svr_id        | alpha-num string | - `10cd7254d57e58ae560b15d51e34b4c8` (SEA)<br>- `591d6af3a3090d8ea00d8f86cf6d7501`<br>- `6eb2a235b30d05efd77bedb5cf60999e` (EU)<br>- `86d52186155b148b5c138ceb41be9650`<br>- `76402e5b20be2c39f095a152090afddc` (CN?) | yes      | Server ID, likely fixed based on server selected, 32 characters                                                                              |
-| player_id     | int              | `123456789`                                                                                                                                                                                                      | yes      | It's your player ID                                                                                                                          |
-| lang          | string           | - `zh-Hans`<br>- `zh-Hant`<br>- `en`<br>- `ja`<br>- `ko`<br>- `fr`<br>- `de`<br>- `es`                                                                                                                           | yes      | Language used in reply info                                                                                                                  |
-| gacha_id      | int              |                                                                                                                                                                                                                  |          |                                                                                                                                              |
-| gacha_type    | int              |                                                                                                                                                                                                                  | yes/no   | initial banner to load. Not required if viewing the web page through a browser, but will select the banner "NaN" with no results if left out |
-| svr_area      | string           | - `global`                                                                                                                                                                                                       | no?      | presumably ether cn or global. (SEA used in personal testing, had global assigned to the variable)                                           |
-| record_id     | string           |                                                                                                                                                                                                                  | yes      | 32 characters long, unknown use,                                                                                                             |
-| resources_id  | string           |                                                                                                                                                                                                                  | no       | 32 characters long, unknown use                                                                                                              |
+| player_id     | int              | `123456789`                                                                                                                                                                                                           | yes      | It's your player ID                                                                                                                          |
+| lang          | string           | - `zh-Hans`<br>- `zh-Hant`<br>- `en`<br>- `ja`<br>- `ko`<br>- `fr`<br>- `de`<br>- `es`                                                                                                                                | yes      | Language used in reply info                                                                                                                  |
+| gacha_id      | int              |                                                                                                                                                                                                                       |          |                                                                                                                                              |
+| gacha_type    | int              |                                                                                                                                                                                                                       | yes/no   | initial banner to load. Not required if viewing the web page through a browser, but will select the banner "NaN" with no results if left out |
+| svr_area      | string           | - `global`                                                                                                                                                                                                            | no?      | presumably ether cn or global. (SEA used in personal testing, had global assigned to the variable)                                           |
+| record_id     | string           |                                                                                                                                                                                                                       | yes      | 32 characters long, unknown use,                                                                                                             |
+| resources_id  | string           |                                                                                                                                                                                                                       | no       | 32 characters long, unknown use                                                                                                              |
+
+
+### Results
+https://gmserver-api.aki-game2.net/gacha/record/query
+Requires it to be a POST request, and to have `Content-Type: application/json` as a header
+
+#### Post Data
+
+```json
+{
+	"playerId":"id",
+	"cardTypePool":idNum, //gacha ID number
+	"serverId":"server_string",
+	"languageCode":"lang",
+	"recordId":"record_id"
+}
+```
+
+#### Response Format
+
+```json
+{
+	"code":0,
+	"message": "success",
+	"data": [
+		{
+			"cardPoolType": "Internal Banner Name",
+			"resourceId": int,
+			"qualityLevel": int, //how many stars, 3, 4, 5
+			"resourceType": "string", //Resonator, Weapon
+			"name": "string",
+			"count": 1, //I guess there may be the option for pulling multiple, or this might change once the resonator is maxed?
+			"time": "yyyy-MM-dd hh:mm:ss"
+		},
+		{...}
+	]
+}
+```
+
+#### Response Variables
+| Variable Name | Variable Type | Possible Values             | Additional Info                      |
+| ------------- | ------------- | --------------------------- | ------------------------------------ |
+| cardPoolType  | string        |                             | See card pool info table.            |
+| resourceId    | int           |                             | uid, identifies the weapon/resonator |
+| qualityLevel  | int           | - `3`<br>- `4`<br>- `5`     |                                      |
+| resourceType  | string        | - `Resonator`<br>- `Weapon` |                                      |
+
+#### Card Pool Info
+
+| cardPoolType (POST) | cardPoolType (response/internal)   | Banner Results Name                                  |
+| ------------------- | ---------------------------------- | ---------------------------------------------------- |
+| 1                   | Resonators Accurate Modulation     | Featured Resonator Convene                           |
+| 2                   | Resonators Accurate Modulation - 2 | Featured Weapon Convene                              |
+| 3                   | Weapons Accurate Modulation        | Standard Resonator Convene                           |
+| 4                   | Full-Range Modualtion              | Standard Weapon Convene                              |
+| 5                   | Starter Modualtion                 | Beginner Convene                                     |
+| 6                   | 6                                  | Beginner's Choice Convene                            |
+| 7                   | 7                                  | Beginner's Choice Convene ( Giveback Custom Convene) |
+(Courtesy of [Luzefiru](https://github.com/Luzefiru))
+
+
 
 ## Announcements
 
@@ -60,33 +122,35 @@ https://aki-gm-resources-back.aki-game.net/gamenotice/G153/ `%SERVER_ID%` /notic
 #### Format
 
 ```json
-"game":[ // Game and Community announcements
-	{
-		"contentPrefix":[ //
-			"url here"
-		],
-		"red":1, //int
-		"permanent":0, //int
-		"id":"id string",
-		"startTimeMs":1717322580000, //Date() compatable int.
-		"endTimeMs":1717322580000, //same as above
-		"platform": [1,2,3], //PC, Android, iOS? unknown which is which.
-		"channel": [], //it appears to be empty by default.
-		"whiteList": [],
-		"tabTitle":{
-			"language code":"string",
+{
+	"game":[ // Game and Community announcements
+		{
+			"contentPrefix":[ //
+				"url here"
+			],
+			"red":1, //int
+			"permanent":0, //int
+			"id":"id string",
+			"startTimeMs":1717322580000, //Date() compatable int.
+			"endTimeMs":1717322580000, //same as above
+			"platform": [1,2,3], //PC, Android, iOS? unknown which is which.
+			"channel": [], //it appears to be empty by default.
+			"whiteList": [],
+			"tabTitle":{
+				"language code":"string",
+			},
+			"tabBanner":{
+				"language code":["url to banner image"],
+			}
 		},
-		"tabBanner":{
-			"language code":["url to banner image"],
+		...
+	],
+	"activity":[ // Banners and ingame events
+		{
+			// Same format as above
 		}
-	},
-	...
-],
-"activity":[ // Banners and ingame events
-	{
-		// Same format as above
-	}
-]
+	]
+}
 ```
 
 
